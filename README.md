@@ -21,7 +21,6 @@ Open <http://127.0.0.1:8788/>. The simulation writes tracker and episode logs.
 
 - [Ubuntu capture guide](datacap/README.md) covers hardware setup and both camera profiles.
 - [Post-processing guide](dataprocess/README.md) covers the X3 inspection workflow and the X5 dataset pipeline.
-- [Optional iOS X5 companion](ios/README.md) covers camera control and media transfer. It requires separately installed SDK frameworks and Xcode signing.
 
 Hardware tracker capture requires a compatible local VIVE backend. The open-source recorder and adapter specify its interface in the Ubuntu guide. The repository ships launch examples, reference calibration curves, and code only.
 

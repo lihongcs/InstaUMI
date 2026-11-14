@@ -637,9 +637,8 @@ class BlueZDirectInstaAdapter(InstaAdapter):
 class BlueZRemoteInstaAdapter(InstaAdapter):
     """Persistent adapter for the independent BlueZ GPS-remote worker.
 
-    This is deliberately named ``Remote``: it is a BLE peripheral emulating an
-    Insta360 GPS Action Remote, not the proprietary iOS/Android direct-camera
-    BLE client used by ``instaapp``.
+    The worker acts as a BLE peripheral and emulates an Insta360 GPS Action
+    Remote.
     """
 
     protocol_prefix = "DATACAP_BLE_JSON "
