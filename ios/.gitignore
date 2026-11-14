@@ -1,0 +1,8 @@
+
+/iOS_v1.9.2
+/build
+/instaumi/build
+.DS_Store
+*.xcuserstate
+xcuserdata/
+instaumi/Frameworks/

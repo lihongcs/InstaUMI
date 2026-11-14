@@ -1,0 +1,11 @@
+InstaUMI
+Copyright 2026 Hong Li and InstaUMI contributors
+
+The first-party InstaUMI source is licensed under the Apache License, Version 2.0.
+
+LeRobot code carries its own Apache-2.0 license, copyright attribution and notice
+in dataprocess/_05_convert_bimanual_lerobot/lerobot/. See also
+datacap/THIRD_PARTY_NOTICES.md for BLE protocol references and MIT attribution.
+
+Insta360 SDKs and compatible Tracker backends are supplied separately under their
+respective terms.

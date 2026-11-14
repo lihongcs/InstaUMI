@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.sdk/
+.venv/
+bin/
+build/
+captures/
+config.json
+dist/
+config.json
+config.usb_webcam.json

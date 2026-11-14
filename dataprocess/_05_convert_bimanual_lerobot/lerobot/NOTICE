@@ -1,0 +1,7 @@
+LeRobot
+Copyright 2024 The HuggingFace Inc. team. All rights reserved.
+Source: https://github.com/huggingface/lerobot
+
+GenUMI includes a subset of LeRobot's dataset implementation, with local
+changes for LeRobot v2.1 conversion and image handling. See the license and
+source headers for attribution.

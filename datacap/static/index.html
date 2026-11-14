@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>InstaDataCap</title>
+  <link rel="stylesheet" href="/app.css">
+  <link rel="icon" href="data:,">
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand-block">
+      <div>
+        <h1>InstaDataCap</h1>
+        <p id="session-name">No capture session created</p>
+      </div>
+    </div>
+    <div class="header-signals" aria-label="Device overview">
+      <div class="signal-label" id="insta-status"><i></i><span>Checking cameras</span></div>
+      <div class="signal-label" id="tracker-status"><i></i><span>Checking Trackers</span></div>
+      <div class="signal-label" id="pedal-status"><i></i><span>Checking pedal</span></div>
+    </div>
+    <button id="quit-app" class="quit-app-button" type="button">
+      <span aria-hidden="true">&#x23FB;</span><span>Exit App</span>
+    </button>
+  </header>
+
+  <main>
+    <section class="capture-hero" aria-label="Total capture control">
+      <div class="capture-state-block">
+        <span class="section-kicker">TOTAL CAPTURE</span>
+        <div class="capture-state-line">
+          <strong id="total-state">Ready to start</strong>
+          <span class="record-dot" aria-hidden="true"></span>
+        </div>
+        <time id="elapsed">00:00:00</time>
+      </div>
+      <div class="arm-profile">
+        <span class="field-label">Capture mode</span>
+        <div class="segmented-control" role="group" aria-label="Arm capture mode">
+          <button id="arm-dual" data-arm-mode="dual_arm">Dual arm · 2 Trackers</button>
+          <button id="arm-single" data-arm-mode="single_arm">Single arm · Right side</button>
+        </div>
+        <span id="arm-mode-hint" class="field-hint">2 Trackers must be ready before capture</span>
+      </div>
+      <div class="camera-transport-profile">
+        <span class="field-label">Camera connection</span>
+        <div class="segmented-control" role="group" aria-label="Insta360 camera connection">
+          <button id="camera-transport-bluetooth" type="button" data-camera-transport="bluez_direct">Bluetooth Control</button>
+          <button id="camera-transport-wired" type="button" data-camera-transport="usb_webcam">Wired USB</button>
+          <button id="camera-transport-mvs" type="button" data-camera-transport="mvs">MVS Cameras</button>
+        </div>
+        <span id="camera-transport-hint" class="field-hint">Switching does not open camera streams</span>
+      </div>
+      <div class="total-command-group">
+        <button class="total-command start" id="total-button" data-action="start">Start capture</button>
+        <button class="total-command stop" id="total-end-button" data-action="end" disabled>End capture</button>
+      </div>
+    </section>
+
+    <div class="readiness-workspace">
+    <section class="section-block capture-settings" aria-label="Task and data destination settings">
+      <div class="settings-heading">
+        <div><span class="section-kicker">DATA DESTINATION</span><h2>Task &amp; destination</h2></div>
+        <div class="settings-heading-actions">
+          <p>Session folders use the pattern date_task-name</p>
+          <button id="new-capture-task" class="new-task-command" type="button" data-action="new_capture_task" disabled>New capture task</button>
+        </div>
+      </div>
+      <form id="capture-settings-form" class="settings-form">
+        <label class="settings-field task-field">
+          <span>Task name</span>
+          <input id="task-name-input" type="text" maxlength="80" autocomplete="off" placeholder="e.g. dual-arm desk sorting" required>
+        </label>
+        <label class="settings-field path-field">
+          <span>Data folder path</span>
+          <input id="output-root-input" type="text" autocomplete="off" spellcheck="false" placeholder="/path/to/captures" required>
+        </label>
+        <button id="save-capture-settings" class="settings-save" type="submit">Save settings</button>
+      </form>
+      <div class="destination-preview">
+        <span>Next capture destination</span>
+        <strong id="expected-session-dir">Set a task name and output path</strong>
+      </div>
+    </section>
+
+    <section class="section-block device-section">
+      <div class="section-title-row">
+        <div>
+          <span class="section-kicker">HARDWARE</span>
+          <h2>Device readiness</h2>
+        </div>
+        <p>Each required device must be green before capture</p>
+      </div>
+
+      <div class="device-grid">
+        <article class="device-card camera-card" id="camera-card">
+          <div class="device-card-head">
+            <div class="device-identity">
+              <span class="device-icon camera-icon" aria-hidden="true"></span>
+              <div><span class="device-type" id="camera-transport-label">INSTA360</span><h3 id="camera-title">Bluetooth cameras</h3></div>
+            </div>
+            <div class="device-count-block">
+              <strong id="camera-count">0 / 2</strong>
+              <span id="camera-count-label">Disconnected</span>
+            </div>
+          </div>
+          <div id="camera-device-list" class="unit-list"><div class="unit-placeholder">Waiting for camera scan</div></div>
+          <p class="device-detail" id="insta-detail">Waiting for detection</p>
+          <div class="device-actions">
+            <button id="scan-insta" type="button">Scan Bluetooth</button>
+            <button class="accent-button" id="connect-insta" type="button">Connect cameras</button>
+          </div>
+        </article>
+
+        <article class="device-card tracker-card" id="tracker-card">
+          <div class="device-card-head">
+            <div class="device-identity">
+              <span class="device-icon tracker-icon" aria-hidden="true"></span>
+              <div><span class="device-type">VIVE / PYVUT</span><h3>Spatial Trackers</h3></div>
+            </div>
+            <div class="device-count-block">
+              <strong id="tracker-count">0 / 2</strong>
+              <span id="tracker-count-label">Disconnected</span>
+            </div>
+          </div>
+          <div id="tracker-device-list" class="unit-list"><div class="unit-placeholder">Waiting for Tracker data</div></div>
+          <p class="device-detail" id="tracker-detail">Waiting for detection</p>
+          <div class="device-actions tracker-actions">
+            <button class="accent-button" id="recover-htc">Reconnect Trackers</button>
+            <button class="release-htc-button" id="release-other-htc">Stop other HTC service</button>
+          </div>
+        </article>
+
+        <article class="device-card pedal-card" id="pedal-card">
+          <div class="device-card-head">
+            <div class="device-identity">
+              <span class="device-icon pedal-icon" aria-hidden="true"></span>
+              <div><span class="device-type">USB INPUT</span><h3>Foot pedal</h3></div>
+            </div>
+            <span class="large-state" id="pedal-card-state">Checking</span>
+          </div>
+          <div class="pedal-live-indicator" id="pedal-live-indicator">
+            <i aria-hidden="true"></i>
+            <div><strong id="pedal-live-text">Pedal idle</strong><span id="pedal-live-progress">Start progress 0 / 3</span></div>
+          </div>
+          <p class="device-detail" id="pedal-detail">Waiting for detection</p>
+          <div class="pedal-guide"><span>Triple press</span><b>Start</b><span>Single press</span><b>Advance</b><span>Long press</span><b>End</b></div>
+        </article>
+      </div>
+    </section>
+    </div>
+
+    <div class="mvs-live-row" id="mvs-live-row" aria-label="HTC pose and MVS wrist camera previews" hidden></div>
+
+    <section class="section-block usb-camera-preview-panel" id="usb-camera-preview-panel" aria-label="Live camera preview" hidden>
+      <div class="section-title-row camera-preview-title-row">
+        <div>
+          <span class="section-kicker">LIVE CAMERA PREVIEW</span>
+          <h2>Camera Preview</h2>
+        </div>
+        <p>Adapter-owned JPEG previews are shown as-is; recording keeps each backend's configured image stream.</p>
+      </div>
+
+      <div class="camera-preview-toolbar" id="camera-preview-toolbar">
+        <div>
+          <span class="field-label">Native webcam profile · applies to both cameras</span>
+          <div class="segmented-control wide camera-view-mode-control" role="group" aria-label="USB camera view mode">
+            <button id="camera-view-panorama" type="button" data-camera-view-mode="panorama">360° Panorama</button>
+            <button id="camera-view-flat" type="button" data-camera-view-mode="flat">Flat View</button>
+          </div>
+        </div>
+        <p id="camera-view-mode-note">Panorama selects the camera-native 2880×1440 2:1 profile. The worker JPEG is shown as-is; no browser post-processing is applied.</p>
+      </div>
+
+      <div class="camera-preview-grid" id="camera-preview-grid">
+        <article class="camera-preview-card" id="camera-preview-card-right" data-camera-role="insta_right">
+          <header>
+            <div><strong>Right Wrist</strong></div>
+            <b id="camera-preview-state-right">Waiting</b>
+          </header>
+          <div class="camera-preview-stage mode-panorama" id="camera-preview-stage-right">
+            <img id="camera-preview-image-right" alt="Live right-wrist USB camera preview" hidden>
+            <div class="camera-preview-empty" id="camera-preview-empty-right">
+              <strong>Preview not started</strong>
+              <span>Connect the right USB camera and start preview.</span>
+            </div>
+          </div>
+          <footer id="camera-preview-detail-right">Waiting for USB camera status</footer>
+        </article>
+
+        <article class="camera-preview-card" id="camera-preview-card-left" data-camera-role="insta_left">
+          <header>
+            <div><strong>Left Wrist</strong></div>
+            <b id="camera-preview-state-left">Waiting</b>
+          </header>
+          <div class="camera-preview-stage mode-panorama" id="camera-preview-stage-left">
+            <img id="camera-preview-image-left" alt="Live left-wrist USB camera preview" hidden>
+            <div class="camera-preview-empty" id="camera-preview-empty-left">
+              <strong>Preview not started</strong>
+              <span>Connect the left USB camera and start preview.</span>
+            </div>
+          </div>
+          <footer id="camera-preview-detail-left">Waiting for USB camera status</footer>
+        </article>
+      </div>
+    </section>
+
+    <div class="primary-workspace" id="primary-workspace">
+      <span id="trajectory-panel-anchor" hidden></span>
+      <section class="section-block trajectory-panel" id="trajectory-panel">
+        <div class="section-title-row trajectory-title">
+          <div>
+            <span class="section-kicker">LIVE 3D TRAJECTORY</span>
+            <h2>HTC end-effector pose</h2>
+          </div>
+          <div class="canvas-actions">
+            <button id="reset-view" type="button">Reset view</button>
+            <button id="lock-view" type="button" aria-pressed="false">Lock current view</button>
+            <button id="clear-trajectory" type="button">Clear trajectory</button>
+          </div>
+        </div>
+        <div class="canvas-shell" id="canvas-shell">
+          <canvas id="tracker-canvas" aria-label="HTC end-effector pose in the Flexiv world frame"></canvas>
+          <div class="trajectory-labels" id="trajectory-labels" aria-hidden="true"></div>
+          <div class="canvas-help">Display only · exact _05 EEF pose · Drag to orbit · Shift+drag for fine control · Wheel to zoom</div>
+          <div class="canvas-scale" id="trajectory-scale">WebGL 3D initializing</div>
+          <div class="canvas-empty" id="trajectory-empty">
+            <strong>Waiting for spatial coordinates</strong>
+            <span>The transformed end-effector pose appears when Trackers are ready</span>
+          </div>
+          <div class="axis-legend" aria-hidden="true"><span class="axis-x">+X Back</span><span class="axis-y">+Y Left</span><span class="axis-z">+Z Down</span></div>
+        </div>
+        <div class="trajectory-legend" id="trajectory-legend"></div>
+      </section>
+
+      <section class="section-block control-panel">
+        <div class="section-title-row control-heading">
+          <div><span class="section-kicker">WORKFLOW</span><h2>Capture control</h2></div>
+        </div>
+
+        <div class="clock-sync-reminder" id="camera-clock-protocol" role="note">
+          <strong>Clock-sync motion required</strong>
+          <span>After total start, every 10–15 minutes, and before total end, rotate each rigid X5 + HTC assembly for 5–10 seconds using non-periodic multi-axis motion.</span>
+        </div>
+
+        <div class="control-field" id="pedal-mode-field">
+          <span class="field-label">Pedal control mode</span>
+          <div class="segmented-control wide" role="group" aria-label="Pedal control mode">
+            <button id="mode-slam" data-mode="slam">SLAM calibration</button>
+            <button id="mode-segment" data-mode="episode">Episode capture</button>
+          </div>
+        </div>
+
+        <div class="calibration-block" id="slam-calibration-block">
+          <div class="calibration-points">
+            <span class="field-label">SLAM calibration markers</span>
+            <div class="mark-row" id="slam-marks">
+              <div class="slam-mark empty"><span>Marker 1</span><time>Waiting</time></div>
+              <div class="slam-mark empty"><span>Marker 2</span><time>Waiting</time></div>
+            </div>
+          </div>
+          <div class="calibration-actions">
+            <button class="secondary-command" data-action="slam">Record marker</button>
+          </div>
+        </div>
+
+        <div class="segment-summary">
+          <div class="segment-count-metric"><span>Completed episodes</span><strong id="episode-count">0</strong><small>total</small></div>
+          <div class="effective-duration-metric"><span>Effective duration</span><time id="effective-duration">00:00:00.000</time></div>
+          <p id="current-segment">Not started</p>
+        </div>
+        <div class="segment-actions">
+          <button class="segment-command" id="segment-button" data-action="segment">Start episode</button>
+          <button class="undo-command" id="undo-timestamp" data-action="undo_timestamp" disabled>Delete latest episode timestamp</button>
+        </div>
+        <div class="message-bar" id="message-bar" role="status">Waiting to start capture</div>
+      </section>
+    </div>
+
+    <section class="section-block active-view-annotation-panel" aria-label="Optional post-processing target annotations">
+      <div class="section-title-row annotation-title-row">
+        <div>
+          <span class="section-kicker">Optional after capture</span>
+          <h2>Target Object Annotations</h2>
+        </div>
+        <p>Randomly selects one offline episode for separate annotation in the left- and right-hand 360-degree panoramas. Cameras are never connected.</p>
+      </div>
+
+      <ol class="annotation-steps" aria-label="Annotation steps">
+        <li><span>1</span><div><strong>Enter capture directory</strong><small>Existing captures work directly; no workspace file needs to be prepared manually</small></div></li>
+        <li><span>2</span><div><strong>Annotate each hand</strong><small>Target points are stored separately for the two 2:1 panoramas</small></div></li>
+        <li><span>3</span><div><strong>Confirm this episode</strong><small>Either hand may be left empty if no target is visible</small></div></li>
+      </ol>
+
+      <form class="annotation-loader" id="annotation-open-form">
+        <label class="offline-workspace-path">
+          <span>Raw capture or existing annotation directory</span>
+          <input id="offline-annotation-root" type="text" autocomplete="off" spellcheck="false" placeholder="Example: /path/to/captures/example-session">
+        </label>
+        <button id="open-offline-annotation" type="submit">Open and Start Annotating</button>
+        <p id="annotation-loader-hint" data-state="idle">Checking annotation availability...</p>
+      </form>
+
+      <div class="annotation-editor" id="annotation-editor" hidden>
+        <div class="annotation-editor-heading">
+          <div>
+            <span>Current workspace</span>
+            <strong id="annotation-workspace-name">—</strong>
+            <small id="annotation-workspace-path">—</small>
+          </div>
+          <button id="close-offline-annotation" type="button">Change Workspace</button>
+        </div>
+
+        <div class="annotation-episode-navigation">
+          <button id="annotation-previous-episode" type="button">← Previous</button>
+          <div class="annotation-episode-status">
+            <strong id="annotation-episode-label">Episode —</strong>
+            <span id="annotation-offline-progress">0 / 0</span>
+            <small id="annotation-frame-detail">Left/right first frames are paired automatically</small>
+          </div>
+          <button id="annotation-complete-episode" class="annotation-next-command" type="button">Confirm and Continue →</button>
+        </div>
+
+        <div class="annotation-hand-grid" id="annotation-hand-grid">
+          <section class="annotation-hand-card" data-camera-role="insta_left">
+            <header>
+              <div><strong>Left Hand</strong><span>insta_left · 360° panorama</span></div>
+              <small id="annotation-frame-left">Frame —</small>
+            </header>
+            <div class="annotation-stage" id="annotation-stage-left">
+              <img id="annotation-image-left" alt="Left-hand 360-degree panorama annotation frame" hidden>
+              <canvas id="annotation-canvas-left" aria-label="Click to add or remove a left-hand target point"></canvas>
+              <div class="annotation-empty" id="annotation-empty-left">
+                <strong>Loading left-hand panorama...</strong>
+                <span>Reads only the transferred left-hand Insta video.</span>
+              </div>
+            </div>
+            <footer class="annotation-hand-footer">
+              <div><strong id="annotation-count-left">Left hand: 0 targets</strong><span id="annotation-detail-left">Click a target object to add a red point.</span></div>
+              <button id="clear-target-annotations-left" class="clear-records" type="button">Clear Left Targets</button>
+            </footer>
+          </section>
+
+          <section class="annotation-hand-card" data-camera-role="insta_right">
+            <header>
+              <div><strong>Right Hand</strong><span>insta_right · 360° panorama</span></div>
+              <small id="annotation-frame-right">Frame —</small>
+            </header>
+            <div class="annotation-stage" id="annotation-stage-right">
+              <img id="annotation-image-right" alt="Right-hand 360-degree panorama annotation frame" hidden>
+              <canvas id="annotation-canvas-right" aria-label="Click to add or remove a right-hand target point"></canvas>
+              <div class="annotation-empty" id="annotation-empty-right">
+                <strong>Loading right-hand panorama...</strong>
+                <span>Reads only the transferred right-hand Insta video.</span>
+              </div>
+            </div>
+            <footer class="annotation-hand-footer">
+              <div><strong id="annotation-count-right">Right hand: 0 targets</strong><span id="annotation-detail-right">Click a target object to add a red point.</span></div>
+              <button id="clear-target-annotations-right" class="clear-records" type="button">Clear Right Targets</button>
+            </footer>
+          </section>
+        </div>
+
+        <div class="annotation-footer">
+          <div>
+            <strong id="annotation-count">0 targets across both hands</strong>
+            <span id="annotation-detail">Changes in either panorama are saved immediately; click an existing red point to remove it.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-block gripper-binary-panel" aria-label="Read-only gripper binarization preview">
+      <div class="section-title-row gripper-preview-title-row">
+        <div>
+          <span class="section-kicker">READ-ONLY DATA REVIEW</span>
+          <h2>Gripper Binarization Preview</h2>
+        </div>
+        <p>Choose a raw capture/episode or enter an audited Zarr shard or zero-copy collection. Continuous calibrated widths are read without modification; only this browser computes the 0/1 preview. No full dataset conversion runs.</p>
+      </div>
+
+      <form class="gripper-preview-loader" id="gripper-preview-form">
+        <label class="gripper-preview-path">
+          <span>Raw capture/parent, Zarr shard/collection, or legacy dataset</span>
+          <input id="gripper-preview-root" type="text" autocomplete="off" spellcheck="false" placeholder="Example: /path/to/datasets/example.collection">
+        </label>
+        <label class="gripper-preview-capture-input">
+          <span>Raw capture</span>
+          <select id="gripper-preview-capture" disabled>
+            <option value="">Enter a directory first</option>
+          </select>
+        </label>
+        <label class="gripper-preview-episode-input">
+          <span>Segment / episode</span>
+          <select id="gripper-preview-episode" disabled>
+            <option value="">Select an episode</option>
+          </select>
+        </label>
+        <p id="gripper-preview-status" data-state="idle" role="status" aria-live="polite">Raw captures are discovered automatically; exact Zarr/collection paths are opened read-only.</p>
+      </form>
+
+      <div class="gripper-preview-editor" id="gripper-preview-editor" hidden>
+        <div class="gripper-preview-heading">
+          <div>
+            <span>Loaded read-only source</span>
+            <strong id="gripper-preview-dataset-name">—</strong>
+            <small id="gripper-preview-dataset-path">—</small>
+          </div>
+          <p id="gripper-preview-meta">—</p>
+        </div>
+
+        <div class="gripper-preview-controls">
+          <div class="gripper-preview-navigation" aria-label="Episode navigation">
+            <button id="gripper-preview-previous" type="button">← Previous</button>
+            <strong id="gripper-preview-episode-label">Episode —</strong>
+            <button id="gripper-preview-next" type="button">Next →</button>
+          </div>
+          <label class="gripper-preview-source-control">
+            <span>Compare source</span>
+            <select id="gripper-preview-source">
+              <option value="observation_state">observation.state</option>
+              <option value="action">action</option>
+            </select>
+          </label>
+          <div class="gripper-threshold-control">
+            <div>
+              <span>Width threshold</span>
+              <strong id="gripper-threshold-label">20.0 mm</strong>
+            </div>
+            <input id="gripper-threshold-range" type="range" min="0" max="100" step="0.1" value="20" aria-label="Gripper width threshold in millimeters">
+            <label><input id="gripper-threshold-mm" type="number" min="0" max="100" step="0.1" value="20" inputmode="decimal"><span>mm</span></label>
+          </div>
+        </div>
+
+        <p class="gripper-threshold-command">
+          Optional Zarr binary-export override (normal conversion remains continuous):
+          <code id="gripper-threshold-command">20.0 mm = 0.0200 m · Zarr binary export override: GRIPPER_BINARY_THRESHOLD_M=0.0200</code>
+        </p>
+
+        <p class="gripper-preview-warning" id="gripper-preview-warning" hidden></p>
+        <div class="gripper-preview-legend" id="gripper-preview-legend"></div>
+
+        <div class="gripper-preview-chart-grid">
+          <article class="gripper-preview-chart-card">
+            <header><div><strong>Before binarization</strong><span>Calibrated gripper width · millimeters</span></div><small>Dashed line = threshold</small></header>
+            <canvas id="gripper-continuous-canvas" aria-label="Original gripper-width chart"></canvas>
+          </article>
+          <article class="gripper-preview-chart-card">
+            <header><div><strong>After binarization</strong><span>width &lt; threshold → 0 · width ≥ threshold → 1</span></div><small>Computed locally</small></header>
+            <canvas id="gripper-binary-canvas" aria-label="Binarized gripper signal chart"></canvas>
+          </article>
+        </div>
+
+        <div class="gripper-preview-stats-wrap">
+          <table class="gripper-preview-stats">
+            <thead><tr><th>Channel</th><th>Samples</th><th>Range</th><th>Binary 0</th><th>Binary 1</th><th>Transitions</th></tr></thead>
+            <tbody id="gripper-preview-stats"></tbody>
+          </table>
+        </div>
+        <p class="gripper-preview-readonly-note">Read-only guarantee: changing the threshold updates only this browser preview. No Zarr array, collection manifest, legacy Parquet, cache, metadata, or capture file is written. Omitting the explicit export override keeps continuous widths.</p>
+      </div>
+    </section>
+
+    <section class="section-block records-section">
+      <div class="section-title-row">
+        <div><span class="section-kicker">CAPTURE LOG</span><h2>Timestamps &amp; system log</h2></div>
+        <div class="records-header-actions">
+          <div class="log-location"><span>Log file</span><strong id="log-detail">Not created</strong></div>
+          <button id="clear-timestamps" class="clear-records" type="button" disabled>Clear session timestamps</button>
+        </div>
+      </div>
+      <div class="records-grid">
+        <div class="event-table-wrap">
+          <table>
+            <thead><tr><th>Type</th><th>Episode</th><th>Input source</th><th>Time</th><th>Input latency</th><th>Action</th></tr></thead>
+            <tbody id="events-body"><tr><td colspan="6" class="empty">No timestamps</td></tr></tbody>
+          </table>
+        </div>
+        <aside class="ble-log-panel">
+          <h3 id="camera-log-title">Bluetooth action log</h3>
+          <ol id="ble-log"><li class="empty-log">No scan has been run</li></ol>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

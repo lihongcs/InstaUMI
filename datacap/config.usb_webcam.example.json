@@ -1,0 +1,38 @@
+{
+  "task_name": "Untitled USB webcam task",
+  "web": {
+    "host": "127.0.0.1",
+    "port": 8788
+  },
+  "insta": {
+    "mode": "usb_webcam",
+    "connect_on_start": false,
+    "expected_cameras": 2,
+    "usb_devices": {
+      "insta_right": "/dev/v4l/by-path/REPLACE_WITH_RIGHT_X3-video-index0",
+      "insta_left": "/dev/v4l/by-path/REPLACE_WITH_LEFT_X3-video-index0"
+    },
+    "view_mode": "flat",
+    "required_camera_model": "Insta360 X3",
+    "usb_ready_timeout_sec": 15.0,
+    "command_timeout_sec": 8.0,
+    "usb_stop_timeout_sec": 120.0
+  },
+  "tracker": {
+    "enabled": true,
+    "required": true,
+    "simulate": false,
+    "mode": "DONGLE_USB",
+    "require_pose": true,
+    "expected_trackers": 2,
+    "roles": [
+      "htc_right",
+      "htc_left"
+    ],
+    "role_by_mac": {},
+    "preserve_existing_connection": true,
+    "monitor_while_idle": true,
+    "release_on_stop": true,
+    "auto_release_idle_omniimu": false
+  }
+}

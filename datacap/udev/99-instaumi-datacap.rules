@@ -1,0 +1,9 @@
+# InstaUMI USB foot pedal.  This grants read access only to VID/PID 0483:5750;
+# FootPedalReader does not use EVIOCGRAB, so normal keyboards remain available.
+ACTION=="add|change", SUBSYSTEM=="input", KERNEL=="event*", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="5750", GROUP="plugdev", MODE="0660", TAG+="uaccess"
+
+# HTC VIVE Wireless Dongle used by pyvut.
+# The Python `hid` binding may use either the hidraw or libusb backend. Keep
+# both rules: the libusb backend opens /dev/bus/usb/* rather than /dev/hidraw*.
+ACTION=="add|change", SUBSYSTEM=="hidraw", KERNEL=="hidraw*", ATTRS{idVendor}=="0bb4", ATTRS{idProduct}=="0350", GROUP="plugdev", MODE="0660", TAG+="uaccess"
+ACTION=="add|change", SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{idVendor}=="0bb4", ATTR{idProduct}=="0350", GROUP="plugdev", MODE="0660", TAG+="uaccess"

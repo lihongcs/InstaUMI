@@ -1,0 +1,85 @@
+{
+  "task_name": "Untitled task",
+  "web": {
+    "host": "127.0.0.1",
+    "port": 8788
+  },
+  "data_preview": {
+    "timeout_sec": 30.0,
+    "max_frames": 200000,
+    "gripper_binary_threshold_m": 0.02,
+    "gripper_job_output_directory": "gripper_threshold_sampling",
+    "gripper_job_log_lines": 200
+  },
+  "pedal": {
+    "device": "/dev/input/by-id/usb-0483_5750-if01-event-kbd",
+    "name_contains": "HID 0483:5750",
+    "key_code": null,
+    "triple_window_sec": 1.2,
+    "action_cooldown_sec": 0.8,
+    "debounce_sec": 0.08,
+    "long_press_sec": 2.0
+  },
+  "insta": {
+    "mode": "bluez_direct",
+    "connect_on_start": false,
+    "python": "/usr/bin/python3",
+    "adapter": "hci0",
+    "expected_cameras": 2,
+    "require_all": true,
+    "addresses": [],
+    "camera_roles": [
+      "insta_right",
+      "insta_left"
+    ],
+    "role_by_address": {},
+    "name_prefixes": [
+      "X5 "
+    ],
+    "ready_timeout_sec": 10.0,
+    "discovery_timeout_sec": 15.0,
+    "command_timeout_sec": 8.0,
+    "ack_timeout_sec": 3.0,
+    "allow_unsubscribed": false,
+    "resolution": "5.7k60",
+    "bitrate_mbps": 120,
+    "serial": "",
+    "usb_devices": {},
+    "usb_ready_timeout_sec": 15.0,
+    "usb_stop_timeout_sec": 120.0,
+    "view_mode": "flat",
+    "required_camera_model": "Insta360 X3",
+    "mvs_fps": 30.0,
+    "mvs_exposure_us": 20000,
+    "mvs_width": 224,
+    "mvs_height": 224,
+    "mvs_raw_width": 1536,
+    "mvs_raw_height": 1536,
+    "mvs_ready_timeout_sec": 15.0,
+    "mvs_stop_timeout_sec": 30.0,
+    "mvs_require_usb3": true
+  },
+  "tracker": {
+    "enabled": true,
+    "required": true,
+    "simulate": false,
+    "mode": "DONGLE_USB",
+    "require_pose": true,
+    "expected_trackers": 2,
+    "independent_slam": true,
+    "ready_timeout_sec": 10.0,
+    "command_timeout_sec": 15.0,
+    "rate_hz": 60.0,
+    "simulated_trackers": 2,
+    "roles": [
+      "htc_right",
+      "htc_left"
+    ],
+    "role_by_mac": {},
+    "preserve_existing_connection": true,
+    "monitor_while_idle": true,
+    "release_on_stop": true,
+    "health_restart_cooldown_sec": 30.0,
+    "auto_release_idle_omniimu": false
+  }
+}

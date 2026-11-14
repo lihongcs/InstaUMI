@@ -1,0 +1,15 @@
+av
+datasets==3.6.0
+huggingface-hub
+jsonlines
+matplotlib
+numpy
+opencv-contrib-python
+packaging
+pandas
+Pillow
+pyarrow
+scipy
+telemetry-parser
+torch
+torchvision

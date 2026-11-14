@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>instaumi</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>instaumi</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>localhost</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>instaumi uses Bluetooth to find and control Insta360 X5 cameras.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>instaumi uses Bluetooth to find and control Insta360 X5 cameras.</string>
+	<key>NSBluetoothWhileInUseUsageDescription</key>
+	<string>instaumi uses Bluetooth to find and control Insta360 X5 cameras.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>instaumi uses the camera permission when the Insta360 SDK needs camera capture access.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>instaumi uses the microphone permission when the Insta360 SDK records video with audio, and for voice control features.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>instaumi uses speech recognition for hands-free voice control during data collection.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>instaumi uses local network access to connect to Insta360 X5 cameras and the Windows HTC control bridge.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>采集助手使用位置权限读取当前 iPad 连接的 Wi-Fi 名称，用于让影石相机加入同一路由器。</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_instaumi-htc._tcp</string>
+	</array>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>UILaunchScreen</key>
+	<dict/>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>arm64</string>
+	</array>
+	<key>UISupportedExternalAccessoryProtocols</key>
+	<array>
+		<string>com.insta360.onex2control</string>
+		<string>com.insta360.onexcontrol</string>
+		<string>com.insta360.onercontrol</string>
+		<string>com.insta360.nanoscontrol</string>
+		<string>com.insta360.onecontrol</string>
+		<string>com.insta360.camera</string>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+</dict>
+</plist>
