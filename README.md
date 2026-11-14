@@ -1,6 +1,6 @@
 # InstaUMI
 
-InstaUMI is the capture and processing software for [GenUMI](https://lihongcs.github.io/genumi/). Choose a camera profile on Ubuntu, record demonstrations with DataCap, and process the saved session offline.
+[InstaUMI](https://lihongcs.github.io/genumi/) captures robot demonstrations with DataCap on Ubuntu and processes saved sessions offline.
 
 | Camera | Capture profile | Processing output |
 | --- | --- | --- |

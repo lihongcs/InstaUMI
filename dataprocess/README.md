@@ -1,9 +1,9 @@
-# GenUMI data processing
+# InstaUMI data processing
 
 The standard export takes a bimanual X5 + VIVE Ultimate Tracker session from
 DataCap and writes LeRobot v2.1 episodes. A separate USB/UVC entry validates and
 remuxes completed webcam sessions. Run the commands below from the root of the
-extracted GenUMI Ubuntu bundle.
+extracted InstaUMI Ubuntu bundle.
 
 ## Set up the INSV exporter
 
