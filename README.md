@@ -21,6 +21,7 @@ Open <http://127.0.0.1:8788/>. The simulation writes tracker and episode logs.
 
 - [Ubuntu capture guide](datacap/README.md) covers hardware setup and both camera profiles.
 - [Post-processing guide](dataprocess/README.md) covers the X3 inspection workflow and the X5 dataset pipeline.
+- [Measured X5 benchmark](https://lihongcs.github.io/genumi/guide.html#processing) shows the native INSV input, per-stage timings, resource use, and LeRobot output.
 
 Hardware tracker capture requires a compatible local VIVE backend. The open-source recorder and adapter specify its interface in the Ubuntu guide. The repository ships launch examples, reference calibration curves, and code only.
 
