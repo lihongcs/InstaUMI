@@ -1211,3 +1211,116 @@ main {
 @media (max-width: 760px) {
   .usb-camera-preview-panel { padding: 16px; }
 }
+
+/* Capture dashboard */
+:root {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --ink: #142431;
+  --muted-ink: #526574;
+  --blue: #086969;
+  --blue-dark: #075656;
+  --green: #087257;
+  --green-soft: #eaf7f1;
+  --amber: #8d5910;
+  --red: #a62945;
+  --red-soft: #fceef2;
+  --line: #dce5e8;
+  --yellow: #b6ebe3;
+  --yellow-tint: #f2f7f8;
+}
+html, body { background: #eff4f6; color: var(--ink); }
+.app-header {
+  color: var(--ink);
+  background: #fff;
+  border-color: var(--line);
+  box-shadow: none;
+}
+.brand-block p, .signal-label { color: var(--muted-ink); }
+.quit-app-button, .quit-app-button:hover {
+  color: var(--ink);
+  background: #f4f8f9;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+}
+main { margin-top: 22px; }
+.capture-hero {
+  grid-template-columns: minmax(140px,.70fr) minmax(200px,1fr) minmax(240px,1.2fr) minmax(200px,.95fr);
+  gap: 22px;
+  background: linear-gradient(112deg,#102e39,#183c4a);
+  border: 0;
+  border-radius: 17px;
+  box-shadow: none;
+  color: #fff;
+  padding: 23px;
+}
+.capture-hero .section-kicker,
+.capture-hero .field-label,
+.capture-hero .field-hint,
+.capture-hero #elapsed { color: #d5e7ed; }
+.capture-hero .section-kicker { font-size: 15px; letter-spacing: .02em; }
+.capture-state-line strong { font-family: inherit; font-size: 29px; }
+.capture-hero .field-hint { text-align: start; font-size: 14px; }
+.capture-hero .segmented-control {
+  background: #0e2d37;
+  border: 1px solid #45616a;
+  border-radius: 10px;
+}
+.capture-hero .segmented-control button { color: #d9e6ea; border-radius: 7px; }
+.capture-hero .segmented-control button.active { color: #133942; background: #ccece7; }
+.capture-hero .segmented-control button:disabled { opacity: .7; }
+.capture-hero .segmented-control button.active:disabled { opacity: 1; }
+.capture-running .record-dot { background: #ff6b86; box-shadow: 0 0 0 5px #b6567066; }
+.total-command, .total-command:hover { color: #092e36; background: #9ce5da; border: 0; border-radius: 9px; box-shadow: none; }
+.total-command.stop, .total-command.stop:hover { color: #fff; background: #b52b4e; }
+.total-command:disabled { color: #c4d5da; background: #284958; border-color: transparent; }
+.total-command-group:has(button:not(:disabled)) button:disabled { display: none; }
+.total-command-group { display: flex; }
+.total-command-group button { flex: 1; }
+.section-block { border-radius: 14px; background: #fff; border-color: var(--line); box-shadow: none; }
+.settings-heading h2, .section-title-row h2 { font-family: inherit; font-size: 22px; font-weight: 700; }
+.device-grid { gap: 12px; }
+.device-card { background: #f5f8f9; border-color: transparent; border-radius: 12px; }
+.device-card::before { display: none; }
+.device-icon { background: #e1eef1; border: 0; border-radius: 9px; }
+.device-type { letter-spacing: 0; font-size: 14px; }
+.device-card-head { flex-wrap: wrap; }
+.device-count-block { margin-left: auto; }
+.device-count-block strong { font-family: inherit; }
+.device-count-block span, .large-state { font-size: 14px; }
+.device-card .unit-list { grid-template-columns: 1fr; }
+.unit-row { border: 0; background: #fff; min-height: 38px; }
+.unit-row span:empty { display: none; }
+.unit-row strong { font-size: 15px; }
+.device-actions button, .new-task-command, .settings-save, .canvas-actions button,
+.segment-actions button, .calibration-actions button { border-radius: 8px; }
+.device-actions .accent-button, .settings-save, .segment-command { background: var(--blue); color: white; border-color: var(--blue); }
+.segment-command.running { background: #a62945; color: #fff; border-color: #a62945; }
+.pedal-live-indicator, .pedal-live-indicator.offline { background: #fff; border-color: var(--line); }
+.clock-sync-reminder { background: #eef6f7; border: 0; border-left: 3px solid #88aeb4; border-radius: 8px; font-size: 15px; }
+.clock-sync-reminder strong { font-size: 15px; }
+.segment-summary { background: #f1f6f7; border: 0; }
+.segment-summary strong { font-family: inherit; }
+.message-bar { background: #f4f8f9; }
+.segmented-control.wide button.active { background: var(--blue); color: #fff; }
+.canvas-shell { height: clamp(290px, 35vw, 435px); }
+@media (max-width: 1130px) {
+  .capture-hero { grid-template-columns: minmax(0,1fr) minmax(0,1fr); }
+  .total-command-group { justify-self: stretch; max-width: none; }
+}
+@media (max-width: 760px) {
+  .capture-hero { grid-template-columns: minmax(0,1fr); gap: 14px; padding: 18px; }
+  .capture-state-block { grid-row: 1; }
+  .total-command-group { grid-row: 2; }
+  .device-card-head { flex-wrap: nowrap; }
+}
+
+.app-header .brand-block { min-width: 0; }
+.app-header .brand-block > div { min-width: 0; }
+.app-header .brand-block p { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.capture-settings input:disabled { color: var(--muted-ink); background: #f3f6f7; }
+.canvas-actions { flex-wrap: wrap; justify-content: flex-end; }
+.canvas-actions button { flex: 0 0 auto; min-height: 36px; }
+@media (max-width: 760px) {
+  .trajectory-title { align-items: flex-start; }
+  .canvas-actions { justify-content: flex-start; }
+}

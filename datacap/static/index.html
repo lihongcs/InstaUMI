@@ -28,7 +28,7 @@
   <main>
     <section class="capture-hero" aria-label="Total capture control">
       <div class="capture-state-block">
-        <span class="section-kicker">TOTAL CAPTURE</span>
+        <span class="section-kicker">Session</span>
         <div class="capture-state-line">
           <strong id="total-state">Ready to start</strong>
           <span class="record-dot" aria-hidden="true"></span>
@@ -61,9 +61,8 @@
     <div class="readiness-workspace">
     <section class="section-block capture-settings" aria-label="Task and data destination settings">
       <div class="settings-heading">
-        <div><span class="section-kicker">DATA DESTINATION</span><h2>Task &amp; destination</h2></div>
+        <h2>Task &amp; destination</h2>
         <div class="settings-heading-actions">
-          <p>Session folders use the pattern date_task-name</p>
           <button id="new-capture-task" class="new-task-command" type="button" data-action="new_capture_task" disabled>New capture task</button>
         </div>
       </div>
@@ -87,10 +86,8 @@
     <section class="section-block device-section">
       <div class="section-title-row">
         <div>
-          <span class="section-kicker">HARDWARE</span>
           <h2>Device readiness</h2>
         </div>
-        <p>Each required device must be green before capture</p>
       </div>
 
       <div class="device-grid">
@@ -117,7 +114,7 @@
           <div class="device-card-head">
             <div class="device-identity">
               <span class="device-icon tracker-icon" aria-hidden="true"></span>
-              <div><span class="device-type">VIVE / PYVUT</span><h3>Spatial Trackers</h3></div>
+              <div><span class="device-type">VIVE</span><h3>Spatial Trackers</h3></div>
             </div>
             <div class="device-count-block">
               <strong id="tracker-count">0 / 2</strong>
@@ -211,7 +208,7 @@
       <section class="section-block trajectory-panel" id="trajectory-panel">
         <div class="section-title-row trajectory-title">
           <div>
-            <span class="section-kicker">LIVE 3D TRAJECTORY</span>
+            <span class="section-kicker">Live 3D</span>
             <h2>HTC end-effector pose</h2>
           </div>
           <div class="canvas-actions">
@@ -223,11 +220,11 @@
         <div class="canvas-shell" id="canvas-shell">
           <canvas id="tracker-canvas" aria-label="HTC end-effector pose in the Flexiv world frame"></canvas>
           <div class="trajectory-labels" id="trajectory-labels" aria-hidden="true"></div>
-          <div class="canvas-help">Display only · exact _05 EEF pose · Drag to orbit · Shift+drag for fine control · Wheel to zoom</div>
+          <div class="canvas-help">Drag to orbit · Shift + drag for precision · Scroll to zoom</div>
           <div class="canvas-scale" id="trajectory-scale">WebGL 3D initializing</div>
           <div class="canvas-empty" id="trajectory-empty">
             <strong>Waiting for spatial coordinates</strong>
-            <span>The transformed end-effector pose appears when Trackers are ready</span>
+            <span>Connect a tracker to see its pose</span>
           </div>
           <div class="axis-legend" aria-hidden="true"><span class="axis-x">+X Back</span><span class="axis-y">+Y Left</span><span class="axis-z">+Z Down</span></div>
         </div>
@@ -236,12 +233,22 @@
 
       <section class="section-block control-panel">
         <div class="section-title-row control-heading">
-          <div><span class="section-kicker">WORKFLOW</span><h2>Capture control</h2></div>
+          <h2>Capture control</h2>
+        </div>
+
+        <div class="segment-summary">
+          <div class="segment-count-metric"><span>Completed episodes</span><strong id="episode-count">0</strong></div>
+          <div class="effective-duration-metric"><span>Effective duration</span><time id="effective-duration">00:00:00.000</time></div>
+          <p id="current-segment">Not started</p>
+        </div>
+        <div class="segment-actions">
+          <button class="segment-command" id="segment-button" data-action="segment">Start episode</button>
+          <button class="undo-command" id="undo-timestamp" data-action="undo_timestamp" disabled>Delete latest episode timestamp</button>
         </div>
 
         <div class="clock-sync-reminder" id="camera-clock-protocol" role="note">
           <strong>Clock-sync motion required</strong>
-          <span>After total start, every 10–15 minutes, and before total end, rotate each rigid X5 + HTC assembly for 5–10 seconds using non-periodic multi-axis motion.</span>
+          <span>Rotate each X5–tracker pair irregularly on multiple axes for 5–10 s after starting, every 10–15 min, and before stopping.</span>
         </div>
 
         <div class="control-field" id="pedal-mode-field">
@@ -265,15 +272,6 @@
           </div>
         </div>
 
-        <div class="segment-summary">
-          <div class="segment-count-metric"><span>Completed episodes</span><strong id="episode-count">0</strong><small>total</small></div>
-          <div class="effective-duration-metric"><span>Effective duration</span><time id="effective-duration">00:00:00.000</time></div>
-          <p id="current-segment">Not started</p>
-        </div>
-        <div class="segment-actions">
-          <button class="segment-command" id="segment-button" data-action="segment">Start episode</button>
-          <button class="undo-command" id="undo-timestamp" data-action="undo_timestamp" disabled>Delete latest episode timestamp</button>
-        </div>
         <div class="message-bar" id="message-bar" role="status">Waiting to start capture</div>
       </section>
     </div>

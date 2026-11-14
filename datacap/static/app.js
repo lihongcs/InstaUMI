@@ -329,9 +329,8 @@ function render(status) {
   const transitioning = Boolean(status.starting || status.stopping);
   trajectory.applyServerViewState(status.ui_tracker_view);
 
-  elements.sessionName.textContent = status.session_id
-    ? `${status.task_name || "Untitled task"} · ${status.session_id}`
-    : `${status.task_name || "Untitled task"} · No capture session`;
+  elements.sessionName.textContent = status.task_name || "Untitled task";
+  elements.sessionName.title = status.session_id || "No capture session";
   if (document.activeElement !== elements.taskNameInput) {
     elements.taskNameInput.value = status.task_name || "";
   }
@@ -728,10 +727,15 @@ function renderCamera(insta, status, deviceAction) {
         : "USB Webcam frames use host-monotonic V4L2 start-of-exposure timestamps. No gyro-correlation motion is required; both camera frame indexes must remain continuous.";
     } else {
       title.textContent = "Clock-sync motion required";
-      detail.textContent = "After total start, every 10–15 minutes, and before total end, rotate each rigid X5 + HTC assembly for 5–10 seconds using non-periodic multi-axis motion.";
+      detail.textContent = "Rotate each X5–tracker pair irregularly on multiple axes for 5–10 s after starting, every 10–15 min, and before stopping.";
     }
   }
-  const cameras = Array.isArray(insta.cameras) ? insta.cameras : [];
+  const simulated = ["dry_run", "bluez_remote_simulated", "bluez_direct_simulated"].includes(insta.type);
+  const cameraRoles = status.arm_mode === "single_arm"
+    ? ["insta_right"] : ["insta_right", "insta_left"];
+  const cameras = insta.type === "dry_run" && insta.connected
+    ? cameraRoles.map((role) => ({ id: role, role, connected: true, ready: true }))
+    : Array.isArray(insta.cameras) ? insta.cameras : [];
   const connected = Boolean(insta.connected);
   const countedConnected = cameras.filter((item) => Boolean(item.connected)).length;
   const connectedValue = insta.connected_cameras ?? insta.connected_cameras_estimate;
@@ -749,8 +753,7 @@ function renderCamera(insta, status, deviceAction) {
   const ready = hasExplicitReady
     ? Boolean(insta.ready) && !stale
     : expectedCount > 0 && connectedCount >= expectedCount && !stale;
-  const simulated = ["dry_run", "bluez_remote_simulated", "bluez_direct_simulated"].includes(insta.type);
-  const state = simulated ? "connected" : ready ? "ready" : connectedCount > 0 ? (stale ? "lost" : "connected") : "offline";
+  const state = ready ? "ready" : connectedCount > 0 ? (stale ? "lost" : "connected") : "offline";
   const action = String(deviceAction.action || "");
   const scanning = ["scan_insta", "scan_cameras"].includes(action);
   const connecting = ["connect_insta", "connect_cameras"].includes(action);
@@ -759,7 +762,7 @@ function renderCamera(insta, status, deviceAction) {
   const captureLocked = Boolean(status.running || status.starting || status.stopping || status.transitioning);
 
   elements.cameraTransportLabel.textContent = mvsCamera ? "HIKROBOT · MVS" : usbWebcam ? "INSTA360 · USB" : "INSTA360";
-  elements.cameraTitle.textContent = mvsCamera ? "MVS Wrist Cameras" : usbWebcam ? "USB Cameras" : "Bluetooth cameras";
+  elements.cameraTitle.textContent = simulated ? "Simulated cameras" : mvsCamera ? "MVS wrist cameras" : usbWebcam ? "USB cameras" : "Bluetooth cameras";
   elements.cameraLogTitle.textContent = hostPreview ? "Camera action log" : "Bluetooth action log";
   setMvsLiveLayout(mvsCamera);
   // In MVS mode the two preview cards are moved into ``mvsLiveRow`` beside
@@ -799,7 +802,7 @@ function renderCamera(insta, status, deviceAction) {
         const itemReady = cameraItemReady(item, hostPreview);
         const itemStale = hostPreview && Boolean(item.stale || item.preview_stale || item.stream_stalled);
         const unitState = itemReady ? "ready" : itemConnected ? (itemStale ? "lost" : "connected") : "offline";
-        const identity = hostPreview
+        const identity = simulated ? "" : hostPreview
           ? [item.serial, item.device || item.path, item.name].filter(Boolean).join(" · ") || "USB camera"
           : `${shortAddress(item.address)} · ${item.name || "Insta360"}`;
         const itemLabel = itemReady ? (hostPreview && previewRunning ? "Streaming" : "Connected") : itemStale ? "Stale" : itemConnected ? "Connected" : "Discovered";
@@ -808,7 +811,9 @@ function renderCamera(insta, status, deviceAction) {
     : [mvsCamera ? "Right Wrist" : "Insta Right", mvsCamera ? "Left Wrist" : "Insta Left"].slice(0, expectedCount).map((roleName) => `<div class="unit-row state-offline"><i></i><div><strong>${roleName}</strong><span>${mvsCamera ? "Waiting for configured MVS serial" : usbWebcam ? "Waiting for USB discovery" : "Waiting for scan"}</span></div><b>Disconnected</b></div>`).join("");
 
   const names = cameras.map((item) => item.name || item.serial || item.device || item.address).filter(Boolean).join(", ");
-  if (hostPreview) {
+  if (simulated) {
+    elements.instaDetail.textContent = "Demo mode · no camera files recorded";
+  } else if (hostPreview) {
     elements.instaDetail.textContent = stale
       ? "USB preview is stale; fresh frames are required before capture"
       : ready
@@ -899,13 +904,17 @@ function renderTracker(tracker, expectedOverride) {
     const itemState = trackerState(item);
     const statusCode = item.tracking_status_raw ?? item.tracking_status ?? "-";
     const stableId = item.hardware_serial || item.physical_id || item.mac;
-    return `<div class="unit-row state-${itemState.key}"><i></i><div><strong>${roleName}</strong><span>${escapeHtml(shortAddress(stableId))} · Status ${escapeHtml(statusCode)}</span></div><b>${itemState.label}</b></div>`;
+    const identity = tracker.type === "simulated_tracker"
+      ? "" : `${escapeHtml(shortAddress(stableId))} · Status ${escapeHtml(statusCode)}`;
+    return `<div class="unit-row state-${itemState.key}"><i></i><div><strong>${roleName}</strong><span>${identity}</span></div><b>${itemState.label}</b></div>`;
   });
   elements.trackerDeviceList.innerHTML = rows.join("") || '<div class="unit-placeholder">Waiting for tracker data</div>';
   const rfCount = Number(tracker.rf_connected_trackers || 0);
-  elements.trackerDetail.textContent = tracker.receiver_healthy
-    ? `${tracker.mode || "pyvut"} · Dongle healthy · RF slots ${rfCount}/${expected} · recent packets ${recentCount}/${expected} · 6DoF ${readyCount}/${expected} · ${tracker.recording ? "Recording" : "Live monitoring"}`
-    : `${tracker.message || tracker.error || "Waiting for pyvut receiver"}`;
+  elements.trackerDetail.textContent = tracker.type === "simulated_tracker"
+    ? "Demo mode · simulated pose data"
+    : tracker.receiver_healthy
+      ? `${tracker.mode || "pyvut"} · RF ${rfCount}/${expected} · Recent ${recentCount}/${expected} · 6DoF ${readyCount}/${expected} · ${tracker.recording ? "Recording" : "Monitoring"}`
+      : tracker.message || tracker.error || "Waiting for tracker receiver";
   elements.recoverHtc.disabled = Boolean(lastRuntimeStatus.running)
     || Boolean(lastRuntimeStatus.transitioning)
     || requestBusy;
@@ -937,7 +946,7 @@ function renderPedalLive(pedal) {
   elements.pedalLiveIndicator.classList.toggle("offline", !connected);
   if (!connected) {
     elements.pedalLiveText.textContent = "Pedal disconnected";
-    elements.pedalLiveProgress.textContent = "Waiting for USB input device";
+    elements.pedalLiveProgress.textContent = "Use the on-screen controls";
     return;
   }
   if (pressed) {
@@ -1414,7 +1423,7 @@ class TrackerTrajectory3D {
     this.legend.innerHTML = [...this.tracks.values()].map((track) => {
       const point = track.currentPoint || [0, 0, 0];
       const poseLabel = track.calibrated ? "HTC → End effector" : "Raw HTC";
-      return `<div class="track-legend-item"><i style="--track-color:${track.color}"></i><div><strong>${escapeHtml(track.role)}</strong><span>${escapeHtml(shortAddress(track.mac))} · ${poseLabel}</span><code>_05 EEF X ${point[0].toFixed(3)} · Y ${point[1].toFixed(3)} · Z ${point[2].toFixed(3)} m</code><code>WebGL 3D · camera roll CCW 90° · values unchanged</code></div><b class="${track.status === 2 ? "ready" : "lost"}">${track.status === 2 ? "Ready" : "Tracking lost"}</b></div>`;
+      return `<div class="track-legend-item"><i style="--track-color:${track.color}"></i><div><strong>${escapeHtml(track.role)}</strong><span>${escapeHtml(shortAddress(track.mac))} · ${poseLabel}</span><code>X ${point[0].toFixed(3)} · Y ${point[1].toFixed(3)} · Z ${point[2].toFixed(3)} m</code></div><b class="${track.status === 2 ? "ready" : "lost"}">${track.status === 2 ? "Ready" : "Tracking lost"}</b></div>`;
     }).join("");
   }
 
