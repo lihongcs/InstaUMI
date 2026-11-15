@@ -65,6 +65,61 @@ After transfer, add `--require-media` to require the original videos.
 python dataprocess/inspect_capture_session.py /path/to/capture --require-media
 ```
 
+## Export native 180° wrist video
+
+Use the original X5 INSV files in both camera role folders. The two modes
+below write one MP4 per selected lens, chapter and wrist. They preserve the
+native circular fisheye projection and produce chapter video, without tracker
+alignment, episode segmentation or LeRobot features. These commands need
+FFmpeg and ffprobe on `PATH`. The masked mode also needs FFmpeg's `libx264`
+encoder.
+
+### Front 180°
+
+```sh
+python3 dataprocess/export_native_views.py /path/to/capture /path/to/front-export \
+  --profile front-180
+```
+
+This copies the native front video track into MP4 without stitching or
+re-encoding. Check lens orientation on each mounted wrist. The default front
+track is `0:v:0`; use `--right-front-stream 1` or
+`--left-front-stream 1` for a wrist whose front lens is the other video
+track.
+
+### Front and back 180° with face masks
+
+Review the source footage locally and mark every region where faces can
+appear. Create a JSON file with one or more opaque rectangles for each
+wrist and lens. Each box is `[x0, y0, x1, y1]` in native decoded frame
+coordinates normalized to `0..1`, measured from the upper left. These
+illustrative numbers must be replaced with your reviewed regions.
+
+```json
+{
+  "insta_right": {
+    "front": [[0.20, 0.00, 0.80, 0.30]],
+    "back": [[0.10, 0.00, 0.90, 0.40]]
+  },
+  "insta_left": {
+    "front": [[0.20, 0.00, 0.80, 0.30]],
+    "back": [[0.10, 0.00, 0.90, 0.40]]
+  }
+}
+```
+
+```sh
+python3 dataprocess/export_native_views.py /path/to/capture /path/to/masked-export \
+  --profile front-back-180 --mask-json /path/to/reviewed-masks.json
+```
+
+The export fills these fixed rectangles with black before encoding every
+frame. Review the resulting videos before sharing and expand the boxes
+to cover any visible faces. The mode uses manual regions, so a person who
+moves outside them remains visible. Both modes omit audio and write a
+`native_views.json` manifest describing the wrist, view, source video track
+and chapter for each output. Choose a new output directory for each export.
+
 ## Export LeRobot v2.1
 
 The two-arm export uses one pixel-distance-to-width calibration per arm.
