@@ -65,7 +65,7 @@ After transfer, add `--require-media` to require the original videos.
 python dataprocess/inspect_capture_session.py /path/to/capture --require-media
 ```
 
-## Export native 180° wrist video
+## Export native fisheye views
 
 Use the original X5 INSV files in both camera role folders. The two modes
 below write one MP4 per selected lens, chapter and wrist. They preserve the
